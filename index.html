@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Interface with RSS Feed</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        .section {
+            padding: 50px 0;
+            min-height: 100vh;
+        }
+        .bg-dark {
+            background-color: #333 !important;
+            color: #fff;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+            color: #000;
+        }
+        .news-item {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">My Website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="#section1">Section 1</a></li>
+                <li class="nav-item"><a class="nav-link" href="#section2">Section 2</a></li>
+                <li class="nav-item"><a class="nav-link" href="#section3">Section 3</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div id="section1" class="section bg-dark">
+        <div class="container">
+            <h1>Section 1</h1>
+            <p>This is the content of section 1.</p>
+        </div>
+    </div>
+    
+    <div id="section2" class="section bg-light">
+        <div class="container">
+            <h1>Section 2</h1>
+            <div id="news-container"></div>
+        </div>
+    </div>
+    
+    <div id="section3" class="section bg-dark">
+        <div class="container">
+            <h1>Section 3</h1>
+            <p>This is the content of section 3.</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Fetch and display RSS feed news
+        function fetchRSSFeed() {
+            fetch('https://api.rss2json.com/v1/api.json?rss_url=https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml')
+                .then(response => response.json())
+                .then(data => {
+                    const newsContainer = document.getElementById('news-container');
+                    data.items.slice(0, 5).forEach(item => {
+                        const newsItem = document.createElement('div');
+                        newsItem.classList.add('news-item');
+                        newsItem.innerHTML = `<h4><a href="${item.link}" target="_blank">${item.title}</a></h4><p>${item.description}</p>`;
+                        newsContainer.appendChild(newsItem);
+                    });
+                });
+        }
+
+        // Call fetchRSSFeed function when the page loads
+        window.onload = fetchRSSFeed;
+    </script>
+</body>
+</html>
