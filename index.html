@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Interface with RSS Feed</title>
+    <title>News Aggregator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -13,14 +13,6 @@
             padding: 50px 0;
             min-height: 100vh;
         }
-        .bg-dark {
-            background-color: #333 !important;
-            color: #fff;
-        }
-        .bg-light {
-            background-color: #f8f9fa !important;
-            color: #000;
-        }
         .news-item {
             margin-bottom: 15px;
         }
@@ -28,37 +20,37 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#">My Website</a>
+        <a class="navbar-brand" href="#">News Aggregator</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="#section1">Section 1</a></li>
-                <li class="nav-item"><a class="nav-link" href="#section2">Section 2</a></li>
-                <li class="nav-item"><a class="nav-link" href="#section3">Section 3</a></li>
+                <li class="nav-item"><a class="nav-link" href="#bbc-news">BBC News</a></li>
+                <li class="nav-item"><a class="nav-link" href="#google-news">Google News</a></li>
+                <li class="nav-item"><a class="nav-link" href="#youtube-podcasts">YouTube Podcasts</a></li>
             </ul>
         </div>
     </nav>
-    
-    <div id="section1" class="section bg-dark">
+
+    <div id="bbc-news" class="section bg-light">
         <div class="container">
-            <h1>Section 1</h1>
-            <p>This is the content of section 1.</p>
+            <h1>BBC News</h1>
+            <div id="bbc-news-container"></div>
         </div>
     </div>
-    
-    <div id="section2" class="section bg-light">
+
+    <div id="google-news" class="section bg-dark">
         <div class="container">
-            <h1>Section 2</h1>
-            <div id="news-container"></div>
+            <h1>Google News</h1>
+            <div id="google-news-container"></div>
         </div>
     </div>
-    
-    <div id="section3" class="section bg-dark">
+
+    <div id="youtube-podcasts" class="section bg-light">
         <div class="container">
-            <h1>Section 3</h1>
-            <p>This is the content of section 3.</p>
+            <h1>YouTube Podcasts</h1>
+            <div id="youtube-podcasts-container"></div>
         </div>
     </div>
 
@@ -66,33 +58,27 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Smooth scrolling
-        document.querySelectorAll('a.nav-link').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
         // Fetch and display RSS feed news
-        function fetchRSSFeed() {
-            fetch('https://api.rss2json.com/v1/api.json?rss_url=https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml')
+        function fetchRSSFeed(url, containerId) {
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    const newsContainer = document.getElementById('news-container');
-                    data.items.slice(0, 5).forEach(item => {
+                    const container = document.getElementById(containerId);
+                    data.items.slice(0, 40).forEach(item => {
                         const newsItem = document.createElement('div');
                         newsItem.classList.add('news-item');
                         newsItem.innerHTML = `<h4><a href="${item.link}" target="_blank">${item.title}</a></h4><p>${item.description}</p>`;
-                        newsContainer.appendChild(newsItem);
+                        container.appendChild(newsItem);
                     });
                 });
         }
 
         // Call fetchRSSFeed function when the page loads
-        window.onload = fetchRSSFeed;
+        window.onload = () => {
+            fetchRSSFeed('https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/rss.xml', 'bbc-news-container');
+            fetchRSSFeed('https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss', 'google-news-container');
+            fetchRSSFeed('https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw', 'youtube-podcasts-container');
+        };
     </script>
 </body>
 </html>
